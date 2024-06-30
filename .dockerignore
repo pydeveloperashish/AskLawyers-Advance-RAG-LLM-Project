@@ -1,6 +1,8 @@
 venv
 secrets.txt
-
-# Ignore git files
 .git
 .gitignore
+src/.env
+asklawyers-ec2.pem
+access_chat_endpoint.py
+.env

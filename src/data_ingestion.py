@@ -18,7 +18,7 @@ splits = text_splitter.split_documents(docs)
 print("splits: \n", splits)
 # Embed
 vectorstore = FAISS.from_documents(documents=splits, 
- embedding=OpenAIEmbeddings())
+ embedding=OpenAIEmbeddings(api_key = os.getenv('OPENAI_API_KEY')))
 
 vectorstore.save_local('faiss_index')
 print("DB got saved in local")

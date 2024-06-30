@@ -19,7 +19,7 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize OpenAI embeddings and FAISS vector store
-embeddings = OpenAIEmbeddings()
+embeddings = OpenAIEmbeddings(api_key = os.getenv('OPENAI_API_KEY'))
 vectorstore = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 retriever = vectorstore.as_retriever()
 
@@ -28,7 +28,7 @@ retriever = vectorstore.as_retriever()
 prompt = hub.pull("rlm/rag-prompt")
 
 # LLM
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+llm = ChatOpenAI(api_key = os.getenv('OPENAI_API_KEY'), model_name="gpt-3.5-turbo", temperature=0)
 
 # Post-processing function
 def format_docs(docs):
