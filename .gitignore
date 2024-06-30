@@ -1,0 +1,6 @@
+secrets.txt
+asklawyers-ec2.pem
+venv
+access_chat_endpoint.py
+src/.env
+.env

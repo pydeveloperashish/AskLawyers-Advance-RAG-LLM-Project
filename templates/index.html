@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ask Lawyers</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ask Lawyers</h1>
+
+        <div class="input-container">
+            <!-- Form for user input -->
+            <form action="/" method="post">
+                <label for="Input">Input:</label><br>
+                <input type="text" id="Input" name="Input" required><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        {% if data %}
+        <div class="divider"></div> <!-- Divider between input and output -->
+
+        <div class="output-container">
+            <!-- Display the received data if available -->
+            <h2>Received Data:</h2>
+            <div class="output">{{ data.message }}</div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

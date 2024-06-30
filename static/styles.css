@@ -1,0 +1,93 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    width: 600px; /* Adjust container width as needed */
+    max-width: 90%; /* Ensure container does not exceed 90% of viewport width */
+    margin: 0 auto; /* Center align container */
+}
+
+h1 {
+    color: #333;
+}
+
+.input-container, .output-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.input-container {
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input {
+    margin-top: 5px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.divider {
+    height: 1px;
+    background-color: #ccc;
+    margin: 20px 0; /* Adjust margin as needed */
+}
+
+.output-container {
+    text-align: center;
+    width: 80%; /* Adjust width of output container */
+    margin: 0 auto; /* Center align output container */
+    padding: 20px;
+}
+
+h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.output {
+    margin-top: 10px;
+    padding: 10px;
+    min-height: 200px; /* Increased minimum height for better readability */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.5;
+    color: black;
+}

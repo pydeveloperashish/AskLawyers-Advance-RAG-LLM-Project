@@ -1,0 +1,6 @@
+venv
+secrets.txt
+
+# Ignore git files
+.git
+.gitignore
