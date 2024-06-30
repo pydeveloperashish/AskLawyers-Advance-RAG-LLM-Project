@@ -28,7 +28,7 @@ jobs:
         ECR_REGISTRY: 471112623645.dkr.ecr.us-east-1.amazonaws.com
         ECR_REPOSITORY: asklawyers:latest
         IMAGE_TAG: latest
-        API_KEY: ${{ secrets.API_KEY }}
+        API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         docker build --build-arg API_KEY=$API_KEY -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
