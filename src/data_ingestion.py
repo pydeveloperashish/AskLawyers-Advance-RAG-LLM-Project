@@ -1,24 +1,32 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.vectorstores import Chroma, FAISS
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 import os
-from dotenv import load_dotenv, find_dotenv
+import boto3
 
-load_dotenv(find_dotenv())
+# Initialize S3 client
+s3_client = boto3.client('s3')
 
-#### INDEXING ####
-# Load Documents
-loader = PyPDFLoader(r'./dataset/Indian Penal Code Book (2).pdf')
-docs = loader.load()
+# Define your S3 bucket
+bucket_name = 'asklawyers-bucket-s3'
 
-# Split
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-splits = text_splitter.split_documents(docs)
-print("splits: \n", splits)
-# Embed
-vectorstore = FAISS.from_documents(documents=splits, 
- embedding=OpenAIEmbeddings(api_key = os.getenv('OPENAI_API_KEY')))
+# Function to upload a file to S3
+def upload_pdf_to_s3(bucket, local_path, s3_key):
+    try:
+        s3_client.upload_file(local_path, bucket, s3_key)
+        print(f'Successfully uploaded {local_path} to S3 bucket: {bucket}/{s3_key}')
+    except Exception as e:
+        print(f'Error uploading file to S3: {e}')
 
-vectorstore.save_local('faiss_index')
-print("DB got saved in local")
+# Function to upload all PDF files from a directory to S3
+def upload_pdfs_from_directory(directory, bucket_name):
+    try:
+        for filename in os.listdir(directory):
+            if filename.endswith('.pdf'):
+                local_path = os.path.join(directory, filename)
+                s3_key = f'pdf_files/{filename}'  # Customize the S3 key as needed
+                upload_pdf_to_s3(bucket_name, local_path, s3_key)
+    except Exception as e:
+        print(f'Error uploading PDFs from directory: {e}')
+
+# Example usage
+input_dir = r'dataset\Indian Penal Code Book (2)_chunks'
+
+upload_pdfs_from_directory(input_dir, bucket_name)

@@ -9,3 +9,6 @@ python-dotenv
 faiss-cpu
 fastapi
 uvicorn
+boto3
+PyPDF2
+langchain_chroma
