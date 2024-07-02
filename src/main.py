@@ -1,53 +1,41 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-from dotenv import load_dotenv, find_dotenv
 from langchain import hub
-from langchain_community.vectorstores import FAISS
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import PromptTemplate
+from langchain.chains import RetrievalQA
+from data_retrieval import get_retriever
 
-import os
-load_dotenv(find_dotenv())
+retriever = get_retriever()
 
-app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+custom_template = """
+You are an helpful assistent of law. Answer query in detail
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+{context}
 
-# Initialize OpenAI embeddings and FAISS vector store
-embeddings = OpenAIEmbeddings(api_key = os.getenv('OPENAI_API_KEY'))
-vectorstore = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
-retriever = vectorstore.as_retriever()
+{question}
+"""
 
-# Define RAG pipeline setup
-# Prompt
-prompt = hub.pull("rlm/rag-prompt")
+prompt = PromptTemplate(template=custom_template, input_variables=["context", "question"])
 
-# LLM
-llm = ChatOpenAI(api_key = os.getenv('OPENAI_API_KEY'), model_name="gpt-3.5-turbo", temperature=0)
+llm = ChatOpenAI(api_key = "sk-proj-fliqN0D1ZezyFMJuwm4FT3BlbkFJQafRGwNmCDWcBXemoK7W", 
+                 model="gpt-3.5-turbo-0125")
 
-# Post-processing function
+
+
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
-# Chain setup
-rag_chain = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
-    | llm
-    | StrOutputParser()
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=retriever,
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": prompt},
 )
 
-@app.get("/", response_class=HTMLResponse)
-async def get_data(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-@app.post("/", response_class=HTMLResponse)
-async def post_data(request: Request, Input: str = Form(...)):
-    result = rag_chain.invoke(Input)
-    data = {"message": result}
-    return templates.TemplateResponse("index.html", {"request": request, "data": data})
+response = qa_chain.invoke("What is sections in IPC?")
+print(response['result'])
