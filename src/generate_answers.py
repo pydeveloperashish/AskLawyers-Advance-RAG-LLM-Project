@@ -5,8 +5,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from query_enhancement import get_enhanced_query
 
-llm = ChatOpenAI(api_key = 'sk-proj-u8KWkDd79BwkiPIE7xzQT3BlbkFJUsIhCEzXnQHaTC5NfMO2',
-                 model ="gpt-3.5-turbo-0125")
+llm = ChatOpenAI(model ="gpt-3.5-turbo-0125")
 
 retriever = get_retriever()
 

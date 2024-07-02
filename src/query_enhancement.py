@@ -1,6 +1,6 @@
 from prompt_templates import ENHANCED_QUERY_PROMPT_TEMPLATE
 from openai import OpenAI
-client = OpenAI(api_key='sk-proj-u8KWkDd79BwkiPIE7xzQT3BlbkFJUsIhCEzXnQHaTC5NfMO2')
+client = OpenAI()
 
 def get_enhanced_query(query):
     completion = client.chat.completions.create(
