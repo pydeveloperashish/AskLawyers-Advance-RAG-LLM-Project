@@ -1,13 +1,21 @@
-from langchain import hub
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 from data_retrieval import get_retriever
+from dotenv import load_dotenv, find_dotenv
 import os 
+
+
+app = FastAPI()
+templates = Jinja2Templates(directory="../templates")
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="../static"), name="static")
+
 
 retriever = get_retriever()
 
@@ -37,5 +45,12 @@ qa_chain = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": prompt},
 )
 
-response = qa_chain.invoke("What is sections in IPC?")
-print(response['result'])
+@app.get("/", response_class=HTMLResponse)
+async def get_data(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.post("/", response_class=HTMLResponse)
+async def post_data(request: Request, Input: str = Form(...)):
+    response = qa_chain.invoke(Input)
+    data = {"message": response['result']}
+    return templates.TemplateResponse("index.html", {"request": request, "data": data})
