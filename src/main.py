@@ -21,8 +21,7 @@ You are an helpful assistent of law. Answer query in detail
 
 prompt = PromptTemplate(template=custom_template, input_variables=["context", "question"])
 
-llm = ChatOpenAI(api_key = os.getenv('OPENAI_API_KEY'), 
-                 model="gpt-3.5-turbo-0125")
+llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
 
 
 
