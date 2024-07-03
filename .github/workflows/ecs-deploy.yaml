@@ -10,38 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v1
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: us-east-1
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image
-      env:
-        ECR_REGISTRY: 471112623645.dkr.ecr.us-east-1.amazonaws.com
-        ECR_REPOSITORY: asklawyers
-        IMAGE_TAG: latest
-        API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: |
-        docker build --build-arg API_KEY=$API_KEY -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build, tag, and push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: my-ecr-repo
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Deploy to ECS
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: us-east-1
-        API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      with:
-        task-definition: asklawyers-fargate-tasks-revision5.json
-        service: asklawyer-fargate-service
-        cluster: AskLawyers-Fargate
-        wait-for-service-stability: true
+      - name: Register new task definition
+        id: task-def
+        run: |
+          aws ecs describe-task-definition --task-definition my-task | jq '.taskDefinition' > task-def.json
+          jq '.containerDefinitions[0].image = "'${{ steps.login-ecr.outputs.registry }}/my-ecr-repo:${{ github.sha }}'"' task-def.json > task-def-new.json
+          jq '.containerDefinitions[0].secrets = [{"name": "ASKLAWYER_OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ASKLAWYER_OPENAI_API_KEY"}]' task-def-new.json > task-def-final.json
+          aws ecs register-task-definition --cli-input-json file://task-def-final.json
+
+      - name: Deploy to ECS service
+        run: |
+          aws ecs update-service --cluster my-cluster --service my-service --task-definition $(jq -r '.taskDefinitionArn' task-def-final.json)
