@@ -27,7 +27,7 @@ jobs:
       - name: Build, tag, and push image to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: asklawyers
+          ECR_REPOSITORY: my-ecr-repo
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -36,11 +36,22 @@ jobs:
       - name: Register new task definition
         id: task-def
         run: |
+          # Describe the current task definition and save it to a file
           aws ecs describe-task-definition --task-definition asklawyers-fargate-tasks | jq '.taskDefinition' > asklawyers-fargate-tasks.json
-          jq '.containerDefinitions[0].image = "'${{ steps.login-ecr.outputs.registry }}/my-ecr-repo:${{ github.sha }}'"' task-def.json > task-def-new.json
+
+          # Update the image in the task definition
+          jq '.containerDefinitions[0].image = "'${{ steps.login-ecr.outputs.registry }}/my-ecr-repo:${{ github.sha }}'"' asklawyers-fargate-tasks.json > task-def-new.json
+
+          # Add the secret to the task definition
           jq '.containerDefinitions[0].secrets = [{"name": "ASKLAWYER_OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ASKLAWYER_OPENAI_API_KEY"}]' task-def-new.json > task-def-final.json
-          aws ecs register-task-definition --cli-input-json file://asklawyers-fargate-tasks.json
+
+          # Register the new task definition
+          aws ecs register-task-definition --cli-input-json file://task-def-final.json
 
       - name: Deploy to ECS service
         run: |
-          aws ecs update-service --cluster my-cluster --service my-service --task-definition $(jq -r '.taskDefinitionArn' asklawyers-fargate-tasks.json)
+          # Get the new task definition ARN
+          TASK_DEFINITION_ARN=$(jq -r '.taskDefinitionArn' task-def-final.json)
+          
+          # Update the ECS service with the new task definition
+          aws ecs update-service --cluster my-cluster --service my-service --task-definition $TASK_DEFINITION_ARN
