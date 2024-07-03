@@ -1,13 +1,12 @@
 from langchain.chains import RetrievalQA
 from dotenv import load_dotenv, find_dotenv
-from data_retrieval import get_retriever
-from langchain_openai import ChatOpenAI
+from reranker import get_reranked_docs
 from langchain_core.prompts import PromptTemplate
 from query_enhancement import get_enhanced_query
+from openai import OpenAI
+from prompt_templates import GENERATE_ANSWER_PROMPT_TEMPLATE
 
-llm = ChatOpenAI(model ="gpt-3.5-turbo-0125")
-
-retriever = get_retriever()
+client = OpenAI()
 
 custom_template = """
 You are an helpful assistent of law. Answer query in detail
@@ -22,14 +21,16 @@ prompt = PromptTemplate(template=custom_template, input_variables=["context", "q
 
 def generate_answer(query):
     enhanced_query = get_enhanced_query(query)
-    print()
-    print("enhanced_query: ", enhanced_query)
-    qa_chain = RetrievalQA.from_chain_type(
-    llm=llm,
-    chain_type="stuff",
-    retriever=retriever,
-    return_source_documents=True,
-    chain_type_kwargs={"prompt": prompt},
+    retrieve_and_rerank = get_reranked_docs(enhanced_query)    
+    context = "\n\n".join(retrieve_and_rerank)  # Combine excerpts into a single string
+    
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": GENERATE_ANSWER_PROMPT_TEMPLATE.format(context=context, enhanced_query = enhanced_query)},
+            {"role": "user", "content": enhanced_query}
+        ]
     )
-    response = qa_chain.invoke(enhanced_query)
-    return response['result']
+    return completion.choices[0].message.content
+
+# print(generate_answer("what is indian panel code?"))
