@@ -1,5 +1,11 @@
 from prompt_templates import ENHANCED_QUERY_PROMPT_TEMPLATE
 from openai import OpenAI
+from dotenv import load_dotenv, find_dotenv
+import os
+
+
+load_dotenv(find_dotenv())
+
 client = OpenAI()
 
 def get_enhanced_query(query):

@@ -5,6 +5,8 @@ from langchain_core.prompts import PromptTemplate
 from query_enhancement import get_enhanced_query
 from openai import OpenAI
 from prompt_templates import GENERATE_ANSWER_PROMPT_TEMPLATE
+import os
+load_dotenv(find_dotenv())
 
 client = OpenAI()
 
