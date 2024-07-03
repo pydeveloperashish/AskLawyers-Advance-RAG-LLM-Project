@@ -12,3 +12,4 @@ uvicorn
 boto3
 PyPDF2
 langchain_chroma
+FlagEmbedding

@@ -1,15 +1,8 @@
 from FlagEmbedding import LLMEmbedder, FlagReranker # Al document present here https://github.com/FlagOpen/FlagEmbedding/tree/master
-import os
-import lancedb
-import re
+from src.data_retrieval import get_excerpt
 import pandas as pd
-import random
-from datasets import load_dataset
 import torch
 import gc
-import lance
-from lancedb.embeddings import with_embeddings
-from data_retrieval import get_excerpt
 
 task = "qa" # Encode for a specific task (qa, icl, chat, lrlm, tool, convsearch)
 embed_model = LLMEmbedder('BAAI/llm-embedder', use_fp16=False) # Load model (automatically use GPUs)

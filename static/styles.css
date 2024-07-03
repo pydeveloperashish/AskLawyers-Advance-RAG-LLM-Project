@@ -13,6 +13,8 @@ body {
     width: 600px; /* Adjust container width as needed */
     max-width: 90%; /* Ensure container does not exceed 90% of viewport width */
     margin: 0 auto; /* Center align container */
+    display: flex; /* Use flexbox to control layout */
+    flex-direction: column; /* Align items vertically */
 }
 
 h1 {
@@ -25,6 +27,8 @@ h1 {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+    width: 100%; /* Make both containers take full width */
+    box-sizing: border-box; /* Include padding and border in width calculation */
 }
 
 .input-container {
@@ -40,7 +44,7 @@ label {
 input {
     margin-top: 5px;
     padding: 8px;
-    width: 100%;
+    width: calc(100% - 20px); /* Adjust input width to accommodate padding */
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -67,10 +71,11 @@ button:hover {
 }
 
 .output-container {
-    text-align: center;
-    width: 80%; /* Adjust width of output container */
-    margin: 0 auto; /* Center align output container */
-    padding: 20px;
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+    margin-top: 20px;
+    flex-wrap: wrap; /* Allow items to wrap if they exceed container width */
 }
 
 h2 {
@@ -86,8 +91,41 @@ h2 {
     border-radius: 4px;
     background-color: #f9f9f9;
     white-space: pre-wrap;
-    overflow-y: auto;
+    overflow-x: auto;
     font-size: 14px;
     line-height: 1.5;
     color: black;
+}
+
+/* Add this style for the example box */
+.example-box {
+    display: none; /* Initially hidden */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    text-align: left;
+    transition: all 0.3s ease; /* Smooth transition */
+    width: 100%; /* Take full width */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+.example-box.show {
+    display: block; /* Display when 'show' class is applied */
+}
+
+.example-box h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+.example-box ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.example-box li {
+    margin-bottom: 10px;
+    font-size: 16px;
 }

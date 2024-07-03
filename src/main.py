@@ -2,13 +2,16 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from generate_answers import generate_answer
+from src.generate_answers import generate_answer
 import os 
 
 app = FastAPI()
-templates = Jinja2Templates(directory="../templates")
+template_folder_path = os.path.join(os.path.dirname(__file__), '..', 'templates')
+static_folder_path = os.path.join(os.path.dirname(__file__), '..', 'static')
+
+templates = Jinja2Templates(directory=template_folder_path)
 # Mount static files
-app.mount("/static", StaticFiles(directory="../static"), name="static")
+app.mount("/static", StaticFiles(directory=static_folder_path), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)

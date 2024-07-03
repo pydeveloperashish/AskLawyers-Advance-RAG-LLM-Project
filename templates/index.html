@@ -3,19 +3,35 @@
 <head>
     <title>Law Library</title>
     <link rel="stylesheet" type="text/css" href="../static/styles.css">
+    <script>
+        function toggleExampleQuestions() {
+            var exampleBox = document.getElementById('example-box');
+            exampleBox.classList.toggle('show');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Law Library</h1>
-
         <div class="input-container">
             <!-- Form for user input -->
             <form action="/" method="post">
                 <label for="Input">Input:</label><br>
-                <input type="text" id="Input" name="Input" required><br>
+                <input type="text" id="Input" name="Input" required onclick="toggleExampleQuestions()"><br>
                 <button type="submit">Submit</button>
             </form>
+
+            <!-- Example Questions (Initially Hidden) -->
+            <div id="example-box" class="example-box">
+                <h2>Example Questions:</h2>
+                <ul>
+                    <li>what is indian penal code?</li>
+                    <li>what is ipc 420?</li>
+                    <li>what are sections in ipc?</li>
+                </ul>
+            </div>
         </div>
+
+        <h1>Law Library</h1>
 
         {% if data %}
         <div class="divider"></div> <!-- Divider between input and output -->
