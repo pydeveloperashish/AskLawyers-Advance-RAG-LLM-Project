@@ -8,17 +8,6 @@ from prompt_templates import GENERATE_ANSWER_PROMPT_TEMPLATE
 
 client = OpenAI()
 
-custom_template = """
-You are an helpful assistent of law. Answer query in detail
-
-{context}
-
-{question}
-"""
-
-prompt = PromptTemplate(template=custom_template, input_variables=["context", "question"])
-
-
 def generate_answer(query):
     enhanced_query = get_enhanced_query(query)
     retrieve_and_rerank = get_reranked_docs(enhanced_query)    
