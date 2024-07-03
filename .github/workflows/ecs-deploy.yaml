@@ -27,7 +27,7 @@ jobs:
       - name: Build, tag, and push image to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: my-ecr-repo
+          ECR_REPOSITORY: asklawyers
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -40,7 +40,7 @@ jobs:
           aws ecs describe-task-definition --task-definition asklawyers-fargate-tasks | jq '.taskDefinition' > asklawyers-fargate-tasks.json
 
           # Update the image in the task definition
-          jq '.containerDefinitions[0].image = "'${{ steps.login-ecr.outputs.registry }}/my-ecr-repo:${{ github.sha }}'"' asklawyers-fargate-tasks.json > task-def-new.json
+          jq '.containerDefinitions[0].image = "'${{ steps.login-ecr.outputs.registry }}/asklawyers:${{ github.sha }}'"' asklawyers-fargate-tasks.json > task-def-new.json
 
           # Add the secret to the task definition
           jq '.containerDefinitions[0].secrets = [{"name": "ASKLAWYER_OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ASKLAWYER_OPENAI_API_KEY"}]' task-def-new.json > task-def-final.json
