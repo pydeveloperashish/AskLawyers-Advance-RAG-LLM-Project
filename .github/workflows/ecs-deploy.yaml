@@ -36,11 +36,11 @@ jobs:
       - name: Register new task definition
         id: task-def
         run: |
-          aws ecs describe-task-definition --task-definition my-task | jq '.taskDefinition' > task-def.json
+          aws ecs describe-task-definition --task-definition asklawyers-fargate-tasks | jq '.taskDefinition' > asklawyers-fargate-tasks.json
           jq '.containerDefinitions[0].image = "'${{ steps.login-ecr.outputs.registry }}/my-ecr-repo:${{ github.sha }}'"' task-def.json > task-def-new.json
           jq '.containerDefinitions[0].secrets = [{"name": "ASKLAWYER_OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ASKLAWYER_OPENAI_API_KEY"}]' task-def-new.json > task-def-final.json
-          aws ecs register-task-definition --cli-input-json file://task-def-final.json
+          aws ecs register-task-definition --cli-input-json file://asklawyers-fargate-tasks.json
 
       - name: Deploy to ECS service
         run: |
-          aws ecs update-service --cluster my-cluster --service my-service --task-definition $(jq -r '.taskDefinitionArn' task-def-final.json)
+          aws ecs update-service --cluster my-cluster --service my-service --task-definition $(jq -r '.taskDefinitionArn' asklawyers-fargate-tasks.json)
