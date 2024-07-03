@@ -21,3 +21,7 @@ async def post_data(request: Request, Input: str = Form(...)):
     response = generate_answer(query = Input)
     data = {"message": response}
     return templates.TemplateResponse("index.html", {"request": request, "data": data})
+
+
+
+# uvicorn main:app --reload
