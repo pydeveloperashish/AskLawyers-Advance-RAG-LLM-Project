@@ -1,15 +1,12 @@
 from src.prompt_templates import ENHANCED_QUERY_PROMPT_TEMPLATE
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
+from utils.utils import get_secret
 import os
 
-# Load the .env file
-load_dotenv()
+# api_key = get_secret()
 
-# Get the API key from the .env file
-api_key = os.getenv('OPENAI_API_KEY')
-
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key = "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")
 
 def get_enhanced_query(query):
     completion = client.chat.completions.create(

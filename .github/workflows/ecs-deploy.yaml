@@ -54,4 +54,4 @@ jobs:
           TASK_DEFINITION_ARN=$(jq -r '.taskDefinitionArn' task-def-final.json)
           
           # Update the ECS service with the new task definition
-          aws ecs update-service --cluster my-cluster --service my-service --task-definition $TASK_DEFINITION_ARN
+          aws ecs update-service --cluster aws-ecs-demo-alex-cluster --service aws-ecs-demo-alex-service --task-definition $TASK_DEFINITION_ARN

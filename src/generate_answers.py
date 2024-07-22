@@ -5,15 +5,12 @@ from langchain_core.prompts import PromptTemplate
 from src.query_enhancement import get_enhanced_query
 from openai import OpenAI
 from src.prompt_templates import GENERATE_ANSWER_PROMPT_TEMPLATE
+from utils.utils import get_secret
 import os
-# Load the .env file
-load_dotenv()
 
-# Get the API key from the .env file
-api_key = os.getenv('OPENAI_API_KEY')
+# api_key = get_secret()
 
-
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key = "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")
 
 def generate_answer(query):
     enhanced_query = get_enhanced_query(query)
