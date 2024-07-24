@@ -8,9 +8,9 @@ from src.prompt_templates import GENERATE_ANSWER_PROMPT_TEMPLATE
 from utils.utils import get_secret
 import os
 
-# api_key = get_secret()
+api_key = get_secret()
 
-client = OpenAI(api_key = "sk-proj-Z3wyjsDGx7LOMjaN7CJPT3BlbkFJJOPCqkiKKxtF44h5MNpC")
+client = OpenAI(api_key = api_key)
 
 def generate_answer(query):
     enhanced_query = get_enhanced_query(query)

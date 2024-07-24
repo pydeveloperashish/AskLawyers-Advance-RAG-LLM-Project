@@ -3,7 +3,7 @@ import json
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
 def get_secret():
-    secret_name = "ASKLAWYER_OPENAI_API_KEY"
+    secret_name = "asklawyers/openai"
     region_name = "us-east-1"
 
     # Create a Secrets Manager client

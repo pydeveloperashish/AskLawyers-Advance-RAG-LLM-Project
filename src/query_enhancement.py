@@ -4,9 +4,9 @@ from dotenv import load_dotenv, find_dotenv
 from utils.utils import get_secret
 import os
 
-# api_key = get_secret()
+api_key = get_secret()
 
-client = OpenAI(api_key = "sk-proj-Z3wyjsDGx7LOMjaN7CJPT3BlbkFJJOPCqkiKKxtF44h5MNpC")
+client = OpenAI(api_key = api_key)
 
 def get_enhanced_query(query):
     completion = client.chat.completions.create(
