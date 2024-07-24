@@ -10,7 +10,7 @@ import os
 api_key = get_secret()
 # os.environ["OPENAI_API_KEY"] = api_key
 
-client = OpenAI(api_key)
+client = OpenAI()
 
 def generate_answer(query):
     enhanced_query = get_enhanced_query(query)

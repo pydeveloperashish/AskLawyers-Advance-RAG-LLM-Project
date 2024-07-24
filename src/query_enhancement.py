@@ -5,9 +5,8 @@ from utils.utils import get_secret
 import os
 
 api_key = get_secret()
-# os.environ["OPENAI_API_KEY"] = api_key
-
-client = OpenAI(api_key)
+os.environ["OPENAI_API_KEY"] = api_key
+client = OpenAI()
 
 def get_enhanced_query(query):
     completion = client.chat.completions.create(
