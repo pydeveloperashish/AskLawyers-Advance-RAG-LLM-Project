@@ -5,7 +5,6 @@ from utils.utils import get_secret
 import os
 
 api_key = get_secret()
-print("api_key: ", api_key)
 os.environ["OPENAI_API_KEY"] = api_key
 
 client = OpenAI()
