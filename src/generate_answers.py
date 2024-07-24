@@ -1,7 +1,6 @@
 from langchain.chains import RetrievalQA
-from dotenv import load_dotenv, find_dotenv
+# from dotenv import load_dotenv, find_dotenv
 from src.reranker import get_reranked_docs
-from langchain_core.prompts import PromptTemplate
 from src.query_enhancement import get_enhanced_query
 from openai import OpenAI
 from src.prompt_templates import GENERATE_ANSWER_PROMPT_TEMPLATE
@@ -9,8 +8,9 @@ from utils.utils import get_secret
 import os
 
 api_key = get_secret()
+os.environ["OPENAI_API_KEY"] = api_key
 
-client = OpenAI(api_key = api_key)
+client = OpenAI()
 
 def generate_answer(query):
     enhanced_query = get_enhanced_query(query)
