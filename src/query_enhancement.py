@@ -6,7 +6,7 @@ import os
 
 # api_key = get_secret()
 
-client = OpenAI(api_key = "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")
+client = OpenAI(api_key = "sk-proj-Z3wyjsDGx7LOMjaN7CJPT3BlbkFJJOPCqkiKKxtF44h5MNpC")
 
 def get_enhanced_query(query):
     completion = client.chat.completions.create(
